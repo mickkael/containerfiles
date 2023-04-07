@@ -6,7 +6,10 @@ RUN apk add -U --upgrade --no-cache \
         py3-syslog-ng \
         syslog-ng \
         syslog-ng-add-contextual-data \
+        syslog-ng-dev \
         syslog-ng-amqp \
+        syslog-ng-doc \
+        syslog-ng-examples \
         syslog-ng-graphite \
         syslog-ng-http \ 
         syslog-ng-json \
