@@ -1,0 +1,8 @@
+FROM alpine
+
+RUN apk add -U --upgrade --no-cache iperf3 && \
+    rm -rf /tmp/*
+
+EXPOSE 5201
+
+ENTRYPOINT ["iperf3"]
