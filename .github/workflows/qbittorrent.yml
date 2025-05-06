@@ -2,11 +2,11 @@
 
 on:
   workflow_dispatch:
-    # inputs:
-    #   version:
-    #     description: 'version'
-    #     required: true
-    #     default: '2.1.1'
+    inputs:
+      version:
+        description: 'version'
+        required: true
+        default: '2.0.11'
   schedule: 
     - cron: '0 2 * * 0'
 
@@ -57,3 +57,4 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: VERSION=${{ github.event.inputs.version }}
