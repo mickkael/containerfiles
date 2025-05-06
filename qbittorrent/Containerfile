@@ -38,7 +38,7 @@ RUN set -ex && \
 
 FROM build
 
-ARG VERSION
+ARG VERSIONQB
 
 ENV PEER_PORT=6881 \
     WEB_PORT=8080 \
@@ -62,7 +62,7 @@ RUN set -ex && \
         zlib-dev && \
     mkdir -p /tmp/qbittorrent && \
     cd /tmp/qbittorrent && \
-    curl -sSL https://github.com/qbittorrent/qBittorrent/archive/release-$VERSION.tar.gz | tar xz --strip 1 && \
+    curl -sSL https://github.com/qbittorrent/qBittorrent/archive/release-$VERSIONQB.tar.gz | tar xz --strip 1 && \
     cmake -Wno-dev -B builddir -G Ninja \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_CXX_STANDARD=20 \
