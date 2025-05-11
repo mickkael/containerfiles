@@ -13,6 +13,15 @@ on:
         default: '5.1.0'
   schedule: 
     - cron: '0 2 * * 0'
+      inputs:
+        version:
+          description: 'version'
+          required: true
+          default: '2.0.11'
+        versionqb:
+          description: 'version'
+          required: true
+          default: '5.1.0'
 
 env:
   REGISTRY: ghcr.io
