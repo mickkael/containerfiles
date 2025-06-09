@@ -74,7 +74,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ github.actor }}/${{ steps.image_name.outputs.name }}
           tags: |
-            type=raw,value="${{ steps.qbittorrent_version.outputs.version_qbittorrent }}.${{ steps.libtorrent_version.outputs.version_libtorrent }}.$(date +'%Y%m%d')"
+            type=raw,value=${{ steps.qbittorrent_version.outputs.version_qbittorrent }}.${{ steps.libtorrent_version.outputs.version_libtorrent }}.$(date +'%Y%m%d')
             type=raw,value=latest
 
       - name: Build and push Docker image
