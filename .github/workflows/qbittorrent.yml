@@ -3,25 +3,16 @@
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: 'version'
+      versionlt:
+        description: 'version libTorrent'
         required: true
-        default: '2.0.11'
+        default: 'latest'
       versionqb:
         description: 'version'
         required: true
-        default: '5.1.0'
+        default: 'latest'
   schedule: 
     - cron: '0 2 * * 0'
-      inputs:
-        version:
-          description: 'version'
-          required: true
-          default: '2.0.11'
-        versionqb:
-          description: 'version'
-          required: true
-          default: '5.1.0'
 
 env:
   REGISTRY: ghcr.io
@@ -55,25 +46,36 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+
+      - name: set libtorrent version
+        id: libtorrent_version
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ github.event.inputs.versionlt }}" == "latest" ]] || [[ "${{ github.event_name }}" == "schedule" ]]; then
+            version_libtorrent=$(curl -s https://api.github.com/repos/arvidn/libtorrent/releases/latest | jq -r .tag_name | sed 's/^v//')
+            echo "version_libtorrent=${version_libtorrent}" >> "$GITHUB_OUTPUT"
+          else
+            version_libtorrent=${{ github.event.inputs.versionlt }}
+            echo "version_libtorrent=${version_libtorrent}" >> "$GITHUB_OUTPUT"
+          fi
+          
+      - name: Get latest qbittorrent version
+        id: qbittorrent_version
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ github.event.inputs.versionqb }}" == "latest" ]] || [[ "${{ github.event_name }}" == "schedule" ]]; then
+            version_qbittorrent=$(curl -s https://api.github.com/repos/qbittorrent/qBittorrent/tags | jq -r '.[0].name' | sed 's/^release-//')
+            echo "version_qbittorrent=${version_qbittorrent}" >> "$GITHUB_OUTPUT"
+          else
+            version_qbittorrent=${{ github.event.inputs.versionqb }}
+            echo "version_qbittorrent=${version_qbittorrent}" >> "$GITHUB_OUTPUT"
+          fi
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ github.actor }}/${{ steps.image_name.outputs.name }}
-
-      - name: Set version variable
-        id: set_version
-        run: |
-          if [ "${{ github.event_name }}" = "schedule" ]; then
-            echo "version=2.0.11" >> "$GITHUB_ENV"
-          else
-            echo "version=${{ github.event.inputs.version  }}" >> "$GITHUB_ENV"
-          fi
-          if [ "${{ github.event_name }}" = "schedule" ]; then
-            echo "versionqb=5.1.0" >> "$GITHUB_ENV"
-          else
-            echo "versionqb=${{ github.event.inputs.versionqb  }}" >> "$GITHUB_ENV"
-          fi
+          tags: |
+            type=raw,value="${{ steps.qbittorrent_version.outputs.version_qbittorrent }}.${{ steps.libtorrent_version.outputs.version_libtorrent }}.$(date +'%Y%m%d')"
+            type=raw,value=latest
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
@@ -85,5 +87,5 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            VERSION=${{ steps.set_version.outputs.version }}
-            VERSIONQB=${{ steps.set_version.outputs.versionqb }}
+            VERSIONLT=${{ steps.libtorrent_version.outputs.version_libtorrent }}
+            VERSIONQB=${{ steps.qbittorrent_version.outputs.version_qbittorrent }}
