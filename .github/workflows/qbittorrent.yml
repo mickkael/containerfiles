@@ -25,6 +25,9 @@ jobs:
       packages: write
 
     steps:
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y%m%d')"
       - name: Image name
         id: image_name
         run: |
@@ -74,7 +77,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ github.actor }}/${{ steps.image_name.outputs.name }}
           tags: |
-            type=raw,value=${{ steps.qbittorrent_version.outputs.version_qbittorrent }}-${{ steps.libtorrent_version.outputs.version_libtorrent }}-${{github.run_date}}
+            type=raw,value=${{ steps.qbittorrent_version.outputs.version_qbittorrent }}-${{ steps.libtorrent_version.outputs.version_libtorrent }}-${{ steps.date.outputs.date }}
             type=raw,value=latest
 
       - name: Build and push Docker image
