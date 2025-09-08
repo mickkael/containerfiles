@@ -7,7 +7,8 @@ ARG GCLOUD_CLI_URL_X64=https://dl.google.com/dl/cloudsdk/channels/rapid/download
 RUN apk add -U --upgrade --no-cache syslog-ng-amqp syslog-ng-dev syslog-ng-doc syslog-ng-examples syslog-ng-graphite syslog-ng-http syslog-ng-json syslog-ng-map-value-pairs syslog-ng-openrc syslog-ng-redis syslog-ng-scl syslog-ng-sql syslog-ng-stardate syslog-ng-stomp syslog-ng-tags-parser syslog-ng-xml python3 && \
     rm -rfv /tmp/* /var/cache/apt/ /var/lib/apt/
 
-RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
+RUN cd /opt && \
+    if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
         wget ${GCLOUD_CLI_URL_X64} -O gcloud.tar.gz; \
     elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
         wget ${GCLOUD_CLI_URL_ARM} -O gcloud.tar.gz; \
@@ -15,7 +16,7 @@ RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
         echo "Unsupported platform: $TARGETPLATFORM" && exit 1; \
     fi && \
     tar -xzf gcloud.tar.gz && rm -f gcloud.tar.gz && \
-    ./google-cloud-sdk/install.sh --quiet --path-update true --usage-reporting false\
+    ./google-cloud-sdk/install.sh --quiet --path-update true --usage-reporting false
 
 
 
