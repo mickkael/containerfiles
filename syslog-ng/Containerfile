@@ -11,7 +11,7 @@ RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
     else \
         echo "Unsupported platform: $TARGETPLATFORM" && exit 1; \
     fi && \
-    tar -xf gcloud.tar.gz && rm -f gcloud.tar.gz && \
+    tar -xzf gcloud.tar.gz && rm -f gcloud.tar.gz && \
     ./google-cloud-sdk/install.sh --quiet --path-update true --usage-reporting false\
 
 RUN apk add -U --upgrade --no-cache syslog-ng-amqp syslog-ng-dev syslog-ng-doc syslog-ng-examples syslog-ng-graphite syslog-ng-http syslog-ng-json syslog-ng-map-value-pairs syslog-ng-openrc syslog-ng-redis syslog-ng-scl syslog-ng-sql syslog-ng-stardate syslog-ng-stomp syslog-ng-tags-parser syslog-ng-xml && \
