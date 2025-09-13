@@ -1,3 +1,4 @@
+
 # -------- Stage 1: Build binary --------
 FROM golang:1.22 AS builder
 
@@ -7,12 +8,13 @@ ENV BUILD_VERSION=${BUILD_VERSION}
 
 WORKDIR /src
 
-# Download and extract the release tarball
+# Download and extract the release tarball properly
+# GitHub releases are usually structured as argocd-mcp-${VERSION}/...
 RUN curl -sSL https://github.com/akuity/argocd-mcp/archive/refs/tags/v${BUILD_VERSION}.tar.gz \
-    | tar xz --strip 1
+    | tar xz --strip-components=1
 
 # Build the mcp-server binary
-RUN go mod tidy && \
+RUN go mod download && \
     CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETPLATFORM} go build -o /bin/mcp-server ./cmd/mcp-server
 
 # -------- Stage 2: Runtime image --------
@@ -22,3 +24,4 @@ COPY --from=builder /bin/mcp-server /usr/local/bin/mcp-server
 
 USER nonroot:nonroot
 ENTRYPOINT ["/usr/local/bin/mcp-server"]
+
