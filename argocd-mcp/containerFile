@@ -1,0 +1,24 @@
+# -------- Stage 1: Build binary --------
+FROM golang:1.22 AS builder
+
+ARG TARGETPLATFORM
+ARG BUILD_VERSION
+ENV BUILD_VERSION=${BUILD_VERSION}
+
+WORKDIR /src
+
+# Download and extract the release tarball
+RUN curl -sSL https://github.com/akuity/argocd-mcp/archive/refs/tags/v${BUILD_VERSION}.tar.gz \
+    | tar xz --strip 1
+
+# Build the mcp-server binary
+RUN go mod tidy && \
+    CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETPLATFORM} go build -o /bin/mcp-server ./cmd/mcp-server
+
+# -------- Stage 2: Runtime image --------
+FROM gcr.io/distroless/base-debian12
+
+COPY --from=builder /bin/mcp-server /usr/local/bin/mcp-server
+
+USER nonroot:nonroot
+ENTRYPOINT ["/usr/local/bin/mcp-server"]
