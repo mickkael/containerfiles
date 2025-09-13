@@ -64,6 +64,8 @@ jobs:
           context: ./${{ steps.image_name.outputs.name }}
           file: ./${{ steps.image_name.outputs.name }}/Containerfile
           platforms: linux/amd64,linux/arm64
+          build-args: |
+            BUILD_VERSION=${{ steps.get_version.outputs.version }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
