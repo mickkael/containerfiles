@@ -30,7 +30,7 @@ jobs:
       - name: Get latest release version
         id: get_version
         run: |
-          VERSION=$(curl -s https://api.github.com/repos/akuity/argocd-mcp/releases/latest | jq -r .tag_name)
+          VERSION=$(curl -s https://api.github.com/repos/argoproj-labs/mcp-for-argocd/releases/latest | jq -r .tag_name)
           echo "version=${VERSION#v}" >> $GITHUB_OUTPUT
 
       - name: Checkout repository
