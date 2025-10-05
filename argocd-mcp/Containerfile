@@ -11,8 +11,7 @@ WORKDIR /app
 RUN npm install -g pnpm
 
 # Download and extract the release source
-RUN curl -sSL 
-https://github.com/argoproj-labs/mcp-for-argocd/archive/refs/tags/v${BUILD_VERSION}.tar.gz \
+RUN curl -sSL https://github.com/argoproj-labs/mcp-for-argocd/archive/refs/tags/v${BUILD_VERSION}.tar.gz \
     | tar xz --strip-components=1 -C /app
 
 # Install dependencies (no dev)
