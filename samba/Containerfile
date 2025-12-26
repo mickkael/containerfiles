@@ -1,0 +1,15 @@
+FROM alpine:3.23
+ENV LOGON_DRIVE=H \
+    NETBIOS_NAME=samba \
+    SERVER_STRING="Samba Server" \
+    TZ=UTC \
+    WORKGROUP=WORKGROUP
+
+RUN apk add --update --no-cache samba shadow tzdata
+
+VOLUME /etc/samba/conf.d /var/log/samba
+EXPOSE 137-138/udp 139 445
+
+COPY smb.conf.j2 /root/
+COPY entrypoint.sh /usr/local/bin/
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
